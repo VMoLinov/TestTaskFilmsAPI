@@ -1,12 +1,13 @@
 package com.example.testtaskfilmsapi.view.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.testtaskfilmsapi.App
 import com.example.testtaskfilmsapi.databinding.FragmentMainBinding
-import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.model.FilmsRepoImpl
 import com.example.testtaskfilmsapi.navigation.BackButtonListener
 import moxy.MvpAppCompatFragment
@@ -22,7 +23,7 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
             App.instance.router
         )
     }
-    private val adapter by lazy { MainAdapter() }
+    private val adapter by lazy { MainAdapter(presenter.itemsListPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,8 +34,11 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
         return binding.root
     }
 
-    override fun renderData(data: Film) {
-        TODO("Not yet implemented")
+    @SuppressLint("NotifyDataSetChanged")
+    override fun renderData() {
+        binding.recyclerMain.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerMain.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     override fun backPressed(): Boolean {

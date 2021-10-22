@@ -23,7 +23,7 @@ data class Film(
     val rating: Double,
 
     @Expose
-    val image_url: String,
+    val image_url: String?,
 
     @Expose
     val description: String,

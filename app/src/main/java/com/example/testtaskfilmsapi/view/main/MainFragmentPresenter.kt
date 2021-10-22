@@ -15,7 +15,6 @@ class MainFragmentPresenter(
     private val router: Router
 ) : MvpPresenter<MainFragmentView>() {
 
-    private var d: List<Film>? = null
     private val callback = object : Callback<Films> {
         override fun onResponse(
             call: Call<Films>,
@@ -23,8 +22,8 @@ class MainFragmentPresenter(
         ) {
             val serverResponse: Films? = response.body()
             if (response.isSuccessful && serverResponse != null) {
-                d = serverResponse.films
-                Log.d(LOG, "success " + d.toString())
+                itemsListPresenter.items.addAll(serverResponse.films)
+                viewState.renderData()
             } else {
                 Log.d(LOG, "empty data " + response.code())
             }
@@ -34,6 +33,23 @@ class MainFragmentPresenter(
             Log.d(LOG, "error " + t.printStackTrace())
         }
     }
+
+    class ItemsListPresenter : IMainListPresenter {
+
+        var items = mutableListOf<Film>()
+
+        override var itemCLickListener: ((MainItemView) -> Unit)? = null
+
+        override fun getCount(): Int = items.size
+
+        override fun bindView(view: MainItemView) {
+            val item = items[view.pos]
+            view.showName(item.name)
+            view.loadImage(item.image_url)
+        }
+    }
+
+    val itemsListPresenter = ItemsListPresenter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -50,6 +66,6 @@ class MainFragmentPresenter(
     }
 
     companion object {
-        val LOG = "RETROFIT"
+        const val LOG = "RETROFIT"
     }
 }
