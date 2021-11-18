@@ -10,7 +10,6 @@ import com.example.testtaskfilmsapi.App
 import com.example.testtaskfilmsapi.databinding.FragmentMainBinding
 import com.example.testtaskfilmsapi.model.FilmsRepoImpl
 import com.example.testtaskfilmsapi.navigation.BackButtonListener
-import me.farahani.spaceitemdecoration.SpaceItemDecoration
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -44,7 +43,6 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
             }
         }
         binding.recyclerMain.layoutManager = layoutManager
-        binding.recyclerMain.addItemDecoration(SpaceItemDecoration(GRID_SPACING, true))
         binding.recyclerMain.adapter = adapter
     }
 
@@ -63,7 +61,6 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
     }
 
     companion object {
-        const val GRID_SPACING = 30
         const val GRID_SPAN_COUNT = 2
     }
 }

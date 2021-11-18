@@ -1,6 +1,7 @@
 package com.example.testtaskfilmsapi.view.main
 
 import android.util.Log
+import android.widget.Toast
 import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.model.Films
 import com.example.testtaskfilmsapi.remote.FilmsRepo
@@ -44,23 +45,30 @@ class MainFragmentPresenter(
         }
     }
 
-    class FilmsListPresenter {
+    class FilmsListPresenter : ListPresenter<MainAdapter.BaseViewHolder> {
 
         var films = mutableListOf<Film>()
         var genres = mutableListOf<String>()
         var data: List<Any> = mutableListOf()
+        override var itemCLickListener: ((MainAdapter.BaseViewHolder) -> Unit)? = null
 
-        var itemCLickListener: ((MainItemView) -> Unit)? = null
 
-        fun getCount(): Int = data.size
+        override fun getCount(): Int = data.size
 
-        fun bindFilm(holder: MainAdapter.FilmsViewHolder) {
+        override fun bind(view: MainAdapter.BaseViewHolder) {
+            when (view) {
+                is MainAdapter.FilmsViewHolder -> bindFilm(view)
+                is MainAdapter.GenreViewHolder -> bindGenre(view)
+            }
+        }
+
+        private fun bindFilm(holder: MainAdapter.FilmsViewHolder) {
             val item = data[holder.pos] as Film
             holder.loadString(item.localized_name)
             holder.loadImage(item.image_url)
         }
 
-        fun bindGenre(holder: MainAdapter.GenreViewHolder) {
+        private fun bindGenre(holder: MainAdapter.GenreViewHolder) {
             holder.loadString(data[holder.pos] as String)
         }
     }
@@ -70,6 +78,28 @@ class MainFragmentPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         loadData()
+        setListener()
+    }
+
+    private fun setListener() {
+        itemsListPresenter.itemCLickListener = {
+            when (it) {
+                is MainAdapter.GenreViewHolder -> {
+                    Toast.makeText(
+                        it.itemView.context,
+                        itemsListPresenter.data[it.pos].toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is MainAdapter.FilmsViewHolder -> {
+                    Toast.makeText(
+                        it.itemView.context,
+                        itemsListPresenter.data[it.pos].toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
     private fun loadData() {

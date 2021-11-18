@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainFilmBinding
 import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainGenreBinding
 import com.example.testtaskfilmsapi.model.Film
-import com.example.testtaskfilmsapi.model.Films
 import com.example.testtaskfilmsapi.view.imageloader.GlideImageLoader
 import com.example.testtaskfilmsapi.view.imageloader.ImageLoader
 
@@ -25,7 +24,7 @@ class MainAdapter(
                         parent,
                         false
                     )
-                )
+                ).apply { itemView.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
             }
             FILMS -> {
                 FilmsViewHolder(
@@ -34,8 +33,7 @@ class MainAdapter(
                         parent,
                         false
                     )
-                )
-//                    .apply { itemView.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
+                ).apply { itemView.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
             }
             else -> {
                 throw IllegalStateException()
@@ -54,20 +52,13 @@ class MainAdapter(
     override fun getItemCount(): Int = presenter.getCount()
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        when (holder) {
-            is GenreViewHolder -> {
-                presenter.bindGenre(holder.apply { pos = position })
-            }
-            is FilmsViewHolder -> {
-                presenter.bindFilm(holder.apply { pos = position })
-            }
-        }
+        presenter.bind(holder.apply { pos = position })
     }
 
     abstract inner class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         abstract fun loadString(text: String)
-        abstract val pos: Int
+        abstract var pos: Int
     }
 
     inner class FilmsViewHolder(private val binding: ItemRecyclerMainFilmBinding) :
@@ -89,6 +80,7 @@ class MainAdapter(
 
         override fun loadString(text: String) {
             binding.genre.text = text
+            binding.genre.setOnClickListener(presenter.itemCLickListener)
         }
 
         override var pos: Int = -1
