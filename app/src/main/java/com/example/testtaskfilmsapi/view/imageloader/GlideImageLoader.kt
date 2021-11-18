@@ -28,14 +28,8 @@ class GlideImageLoader : ImageLoader {
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        handler.post {
-                            Glide.with(imageView.context)
-                                .load(R.drawable.ic_load_error_vector)
-                                .override(200, 200)
-                                .centerInside()
-                                .into(imageView)
-                        }
-                        return false
+                        handler.post { loadDrawableError(imageView) }
+                        return true
                     }
 
                     override fun onResourceReady(
@@ -48,14 +42,17 @@ class GlideImageLoader : ImageLoader {
                         return false
                     }
                 })
-                .override(550, 550)
                 .centerCrop()
                 .into(imageView)
         } else {
-            Glide.with(imageView.context)
-                .load(R.drawable.ic_load_error_vector)
-                .fitCenter()
-                .into(imageView)
+            loadDrawableError(imageView)
         }
+    }
+
+    private fun loadDrawableError(imageView: ImageView) {
+        imageView.scaleType = ImageView.ScaleType.CENTER
+        Glide.with(imageView.context)
+            .load(R.drawable.ic_load_error_vector)
+            .into(imageView)
     }
 }

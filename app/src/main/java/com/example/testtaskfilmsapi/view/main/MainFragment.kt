@@ -10,6 +10,7 @@ import com.example.testtaskfilmsapi.App
 import com.example.testtaskfilmsapi.databinding.FragmentMainBinding
 import com.example.testtaskfilmsapi.model.FilmsRepoImpl
 import com.example.testtaskfilmsapi.navigation.BackButtonListener
+import me.farahani.spaceitemdecoration.SpaceItemDecoration
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -34,10 +35,21 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val layoutManager = GridLayoutManager(requireContext(), GRID_SPAN_COUNT)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return adapter.getItemViewType(position)
+            }
+        }
+        binding.recyclerMain.layoutManager = layoutManager
+        binding.recyclerMain.addItemDecoration(SpaceItemDecoration(GRID_SPACING, true))
+        binding.recyclerMain.adapter = adapter
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun renderData() {
-        binding.recyclerMain.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.recyclerMain.adapter = adapter
         adapter.notifyDataSetChanged()
     }
 
@@ -48,5 +60,10 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        const val GRID_SPACING = 30
+        const val GRID_SPAN_COUNT = 2
     }
 }

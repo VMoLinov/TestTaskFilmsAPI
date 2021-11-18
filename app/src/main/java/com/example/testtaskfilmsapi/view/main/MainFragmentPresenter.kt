@@ -22,34 +22,50 @@ class MainFragmentPresenter(
         ) {
             val serverResponse: Films? = response.body()
             if (response.isSuccessful && serverResponse != null) {
-                itemsListPresenter.items.addAll(serverResponse.films)
+                itemsListPresenter.films.addAll(serverResponse.films)
+                val genres: MutableSet<String> = mutableSetOf()
+                serverResponse.films.forEach {
+                    it.genres?.forEach { genre ->
+                        genres.add(genre)
+                    }
+                }
+                itemsListPresenter.genres.addAll(genres)
+                itemsListPresenter.apply {
+                    data = (genres + films).toList()
+                }
                 viewState.renderData()
             } else {
-                Log.d(LOG, "empty data " + response.code())
+                Log.d(TAG_MAIN_FRAGMENT, "empty data " + response.code())
             }
         }
 
         override fun onFailure(call: Call<Films>, t: Throwable) {
-            Log.d(LOG, "error " + t.printStackTrace())
+            Log.d(TAG_MAIN_FRAGMENT, "error " + t.printStackTrace())
         }
     }
 
-    class ItemsListPresenter : IMainListPresenter {
+    class FilmsListPresenter {
 
-        var items = mutableListOf<Film>()
+        var films = mutableListOf<Film>()
+        var genres = mutableListOf<String>()
+        var data: List<Any> = mutableListOf()
 
-        override var itemCLickListener: ((MainItemView) -> Unit)? = null
+        var itemCLickListener: ((MainItemView) -> Unit)? = null
 
-        override fun getCount(): Int = items.size
+        fun getCount(): Int = data.size
 
-        override fun bindView(view: MainItemView) {
-            val item = items[view.pos]
-            view.showName(item.localized_name)
-            view.loadImage(item.image_url)
+        fun bindFilm(holder: MainAdapter.FilmsViewHolder) {
+            val item = data[holder.pos] as Film
+            holder.loadString(item.localized_name)
+            holder.loadImage(item.image_url)
+        }
+
+        fun bindGenre(holder: MainAdapter.GenreViewHolder) {
+            holder.loadString(data[holder.pos] as String)
         }
     }
 
-    val itemsListPresenter = ItemsListPresenter()
+    val itemsListPresenter = FilmsListPresenter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -66,6 +82,6 @@ class MainFragmentPresenter(
     }
 
     companion object {
-        const val LOG = "RETROFIT"
+        const val TAG_MAIN_FRAGMENT = "RETROFIT"
     }
 }

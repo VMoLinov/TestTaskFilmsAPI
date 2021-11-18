@@ -4,7 +4,7 @@ interface IMainListPresenter : IListPresenter<MainItemView>
 
 interface IListPresenter<V> {
     var itemCLickListener: ((V) -> Unit)?
-    fun bindView(view: V)
+    fun bindFilm(view: V)
     fun getCount(): Int
 }
 
