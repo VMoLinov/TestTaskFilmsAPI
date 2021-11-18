@@ -17,18 +17,18 @@ data class Film(
     val name: String,
 
     @Expose
-    val year: Long,
+    val year: Long?,
 
     @Expose
-    val rating: Double,
+    val rating: Double?,
 
     @Expose
     val image_url: String?,
 
     @Expose
-    val description: String,
+    val description: String?,
 
     @Expose
-    val genres: List<String>
+    val genres: List<String>?
 
 ) : Parcelable

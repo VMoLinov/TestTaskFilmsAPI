@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testtaskfilmsapi.App
 import com.example.testtaskfilmsapi.databinding.FragmentMainBinding
 import com.example.testtaskfilmsapi.model.FilmsRepoImpl
@@ -36,7 +36,7 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
 
     @SuppressLint("NotifyDataSetChanged")
     override fun renderData() {
-        binding.recyclerMain.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerMain.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerMain.adapter = adapter
         adapter.notifyDataSetChanged()
     }

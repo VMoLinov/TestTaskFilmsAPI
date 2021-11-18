@@ -37,3 +37,9 @@ app/keys.jks
 gradle/wrapper/
 gradlew.bat
 gradlew
+
+task/
+
+*.svg
+
+*.png

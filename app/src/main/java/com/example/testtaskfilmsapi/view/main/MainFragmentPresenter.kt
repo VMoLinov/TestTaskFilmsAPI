@@ -44,7 +44,7 @@ class MainFragmentPresenter(
 
         override fun bindView(view: MainItemView) {
             val item = items[view.pos]
-            view.showName(item.name)
+            view.showName(item.localized_name)
             view.loadImage(item.image_url)
         }
     }

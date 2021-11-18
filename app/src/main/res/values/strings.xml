@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Test Task Films API</string>
+    <string name="film_image_description">film image</string>
 </resources>
