@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="180dp"
-    android:layout_height="180dp"
-    android:layout_margin="10dp">
+    android:layout_width="@dimen/item_film_size"
+    android:layout_height="@dimen/item_film_size"
+    android:layout_margin="@dimen/item_film_margin">
 
     <TextView
         android:id="@+id/border"
@@ -21,7 +21,7 @@
         android:id="@+id/filmName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/item_film_margin"
         android:elevation="2dp"
         android:ellipsize="end"
         android:maxLines="2"

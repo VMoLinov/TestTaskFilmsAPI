@@ -9,6 +9,7 @@ import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainGenreBinding
 import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.view.imageloader.GlideImageLoader
 import com.example.testtaskfilmsapi.view.imageloader.ImageLoader
+import com.google.android.material.chip.Chip
 
 class MainAdapter(
     private val presenter: MainFragmentPresenter.FilmsListPresenter,
@@ -24,7 +25,7 @@ class MainAdapter(
                         parent,
                         false
                     )
-                ).apply { itemView.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
+                ).apply { button.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
             }
             FILMS -> {
                 FilmsViewHolder(
@@ -56,13 +57,13 @@ class MainAdapter(
     }
 
     abstract inner class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        abstract fun loadString(text: String)
         abstract var pos: Int
+        abstract fun loadString(text: String)
     }
 
     inner class FilmsViewHolder(private val binding: ItemRecyclerMainFilmBinding) :
         BaseViewHolder(binding.root) {
+        override var pos: Int = -1
 
         override fun loadString(text: String) {
             binding.filmName.text = text
@@ -71,23 +72,24 @@ class MainAdapter(
         fun loadImage(url: String?) {
             imageLoader.load(url, binding.filmImage)
         }
-
-        override var pos: Int = -1
     }
 
     inner class GenreViewHolder(private val binding: ItemRecyclerMainGenreBinding) :
         BaseViewHolder(binding.root) {
+        override var pos: Int = -1
+        val button: Chip = binding.genre
 
         override fun loadString(text: String) {
             binding.genre.text = text
-            binding.genre.setOnClickListener(presenter.itemCLickListener)
         }
 
-        override var pos: Int = -1
+        fun clearChip() {
+            button.isChecked = false
+        }
     }
 
     companion object {
-        const val FILMS = 1
-        const val GENRES = 2
+        const val FILMS = 1 //span weight
+        const val GENRES = 2 //full string
     }
 }

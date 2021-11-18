@@ -23,7 +23,7 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
             App.instance.router
         )
     }
-    private val adapter by lazy { MainAdapter(presenter.itemsListPresenter) }
+    private val adapter by lazy { MainAdapter(presenter.filmsListPresenter) }
 
     override fun onCreateView(
         inflater: LayoutInflater,

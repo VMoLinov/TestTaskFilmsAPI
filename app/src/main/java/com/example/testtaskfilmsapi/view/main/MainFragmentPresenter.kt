@@ -1,7 +1,6 @@
 package com.example.testtaskfilmsapi.view.main
 
 import android.util.Log
-import android.widget.Toast
 import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.model.Films
 import com.example.testtaskfilmsapi.remote.FilmsRepo
@@ -10,6 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.terrakok.cicerone.Router
+import java.util.*
 
 class MainFragmentPresenter(
     private val data: FilmsRepo,
@@ -23,25 +23,26 @@ class MainFragmentPresenter(
         ) {
             val serverResponse: Films? = response.body()
             if (response.isSuccessful && serverResponse != null) {
-                itemsListPresenter.films.addAll(serverResponse.films)
+                filmsListPresenter.films.addAll(serverResponse.films)
                 val genres: MutableSet<String> = mutableSetOf()
                 serverResponse.films.forEach {
                     it.genres?.forEach { genre ->
                         genres.add(genre)
                     }
                 }
-                itemsListPresenter.genres.addAll(genres)
-                itemsListPresenter.apply {
-                    data = (genres + films).toList()
+                filmsListPresenter.genres.addAll(genres)
+                filmsListPresenter.apply {
+                    data = (TreeSet(genres) + films).toList()
+                    cachedData = data.toList()
                 }
                 viewState.renderData()
             } else {
-                Log.d(TAG_MAIN_FRAGMENT, "empty data " + response.code())
+                Log.d(TAG, "empty data " + response.code())
             }
         }
 
         override fun onFailure(call: Call<Films>, t: Throwable) {
-            Log.d(TAG_MAIN_FRAGMENT, "error " + t.printStackTrace())
+            Log.d(TAG, "error " + t.printStackTrace())
         }
     }
 
@@ -50,16 +51,20 @@ class MainFragmentPresenter(
         var films = mutableListOf<Film>()
         var genres = mutableListOf<String>()
         var data: List<Any> = mutableListOf()
+        var cachedData: List<Any> = mutableListOf()
         override var itemCLickListener: ((MainAdapter.BaseViewHolder) -> Unit)? = null
-
 
         override fun getCount(): Int = data.size
 
         override fun bind(view: MainAdapter.BaseViewHolder) {
             when (view) {
-                is MainAdapter.FilmsViewHolder -> bindFilm(view)
                 is MainAdapter.GenreViewHolder -> bindGenre(view)
+                is MainAdapter.FilmsViewHolder -> bindFilm(view)
             }
+        }
+
+        private fun bindGenre(holder: MainAdapter.GenreViewHolder) {
+            holder.loadString(data[holder.pos] as String)
         }
 
         private fun bindFilm(holder: MainAdapter.FilmsViewHolder) {
@@ -68,12 +73,9 @@ class MainFragmentPresenter(
             holder.loadImage(item.image_url)
         }
 
-        private fun bindGenre(holder: MainAdapter.GenreViewHolder) {
-            holder.loadString(data[holder.pos] as String)
-        }
     }
 
-    val itemsListPresenter = FilmsListPresenter()
+    val filmsListPresenter = FilmsListPresenter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -82,21 +84,13 @@ class MainFragmentPresenter(
     }
 
     private fun setListener() {
-        itemsListPresenter.itemCLickListener = {
-            when (it) {
-                is MainAdapter.GenreViewHolder -> {
-                    Toast.makeText(
-                        it.itemView.context,
-                        itemsListPresenter.data[it.pos].toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                is MainAdapter.FilmsViewHolder -> {
-                    Toast.makeText(
-                        it.itemView.context,
-                        itemsListPresenter.data[it.pos].toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
+        filmsListPresenter.apply {
+            itemCLickListener = {
+                when (it) {
+                    is MainAdapter.GenreViewHolder -> {
+                    }
+                    is MainAdapter.FilmsViewHolder -> {
+                    }
                 }
             }
         }
@@ -112,6 +106,6 @@ class MainFragmentPresenter(
     }
 
     companion object {
-        const val TAG_MAIN_FRAGMENT = "RETROFIT"
+        const val TAG = "MainFragmentPresenter"
     }
 }
