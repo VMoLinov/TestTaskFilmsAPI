@@ -1,6 +1,7 @@
 package com.example.testtaskfilmsapi.view.main
 
 import android.util.Log
+import com.example.testtaskfilmsapi.R
 import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.model.Films
 import com.example.testtaskfilmsapi.navigation.AndroidScreens
@@ -45,7 +46,8 @@ class MainFragmentPresenter(
         }
 
         override fun onFailure(call: Call<Films>, t: Throwable) {
-            Log.d(TAG, "error " + t.printStackTrace())
+            Log.d(TAG, "error " + t.stackTraceToString())
+            viewState.showAlertDialog(R.string.callback_failure)
         }
     }
 
@@ -133,7 +135,7 @@ class MainFragmentPresenter(
         }
     }
 
-    private fun loadData() {
+    fun loadData() {
         data.getFilms(callback)
     }
 

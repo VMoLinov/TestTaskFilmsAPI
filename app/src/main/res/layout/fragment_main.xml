@@ -22,4 +22,8 @@
             android:layout_gravity="center_horizontal"
             tools:listitem="@android:layout/simple_gallery_item" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <include
+        android:id="@+id/loading"
+        layout="@layout/loading_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/item_film_size"
     android:layout_height="@dimen/item_film_size"
+    android:layout_gravity="center_horizontal"
     android:layout_margin="@dimen/item_film_margin">
 
     <TextView
         android:id="@+id/border"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/border_height"
         android:alpha="0.4"
-        android:background="@color/black"
+        android:background="?android:attr/colorBackground"
         android:elevation="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +27,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="?attr/colorOnBackground"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,5 +44,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/white"
         tools:src="@drawable/img" />
 </androidx.constraintlayout.widget.ConstraintLayout>

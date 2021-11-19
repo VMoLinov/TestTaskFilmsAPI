@@ -1,6 +1,7 @@
 package com.example.testtaskfilmsapi.view.main
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,7 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
     override fun renderData() {
         binding.recyclerMain.post {
             adapter.notifyDataSetChanged()
+            binding.loading.animationView.visibility = View.GONE
         }
     }
 
@@ -74,6 +76,17 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
         binding.recyclerMain.post {
             adapter.notifyItemRangeInserted(range.first(), range[range.lastIndex])
         }
+    }
+
+    override fun showAlertDialog(message: Int) {
+        AlertDialog.Builder(requireContext())
+            .setMessage(getString(message))
+            .setPositiveButton(getString(R.string.repeat)) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                presenter.loadData()
+            }
+            .create()
+            .show()
     }
 
     override fun backPressed(): Boolean {
