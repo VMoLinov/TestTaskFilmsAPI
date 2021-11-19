@@ -31,4 +31,12 @@ data class Film(
     @Expose
     val genres: List<String>?
 
-) : Parcelable
+) : Parcelable, Comparable<Film> {
+    override fun compareTo(other: Film): Int {
+        return when {
+            localized_name > other.localized_name -> 1
+            localized_name < other.localized_name -> -1
+            else -> 0
+        }
+    }
+}

@@ -3,6 +3,7 @@ package com.example.testtaskfilmsapi.view.main
 import android.util.Log
 import com.example.testtaskfilmsapi.model.Film
 import com.example.testtaskfilmsapi.model.Films
+import com.example.testtaskfilmsapi.navigation.AndroidScreens
 import com.example.testtaskfilmsapi.remote.FilmsRepo
 import moxy.MvpPresenter
 import retrofit2.Call
@@ -32,7 +33,9 @@ class MainFragmentPresenter(
                 }
                 filmsListPresenter.genres.addAll(genres)
                 filmsListPresenter.apply {
-                    data = (TreeSet(genres) + films).toList()
+                    data =
+                        (listOf(MainAdapter.Constants.GENRES_DELIMITER) + TreeSet(genres)
+                                + MainAdapter.Constants.FILMS_DELIMITER + TreeSet(films)).toList()
                     cachedData = data.toList()
                 }
                 viewState.renderData()
@@ -61,6 +64,7 @@ class MainFragmentPresenter(
             when (view) {
                 is MainAdapter.GenreViewHolder -> bindGenre(view)
                 is MainAdapter.FilmsViewHolder -> bindFilm(view)
+                is MainAdapter.DelimiterViewHolder -> bindDelimiter(view)
             }
         }
 
@@ -75,9 +79,15 @@ class MainFragmentPresenter(
             holder.loadImage(item.image_url)
         }
 
+        private fun bindDelimiter(holder: MainAdapter.DelimiterViewHolder) {
+            val constant = data[holder.pos] as MainAdapter.Constants
+            holder.loadString(constant.string)
+
+        }
+
         fun restoreData() {
             data = cachedData.toList()
-            viewState.notifyItemsExclude(selectedItem, data.indices)
+            viewState.notifyItemsExclude(selectedItem, data.indices, false)
             selectedItem = -1
         }
     }
@@ -95,27 +105,33 @@ class MainFragmentPresenter(
             itemCLickListener = {
                 when (it) {
                     is MainAdapter.GenreViewHolder -> {
-                        selectedItem = it.pos
-                        val genre = it.button.text
-                        val filteredFilms: MutableList<Film> = mutableListOf()
-                        films.forEach { film ->
-                            if (film.genres?.contains(genre) == false) filteredFilms.add(film)
-                        }
-                        val newData = cachedData - filteredFilms.toSet()
-                        val removeRange: List<Int> = data.indices - newData.indices
-                        data = newData.toList()
-                        val addRange: List<Int> = newData.indices - data.indices
-                        if (removeRange.isNotEmpty()) viewState.removeRange(removeRange)
-                        if (addRange.isNotEmpty()) viewState.addRange(addRange)
-                        viewState.notifyItemsExclude(selectedItem, data.indices)
+                        handleFilterReaction(it)
                     }
                     is MainAdapter.FilmsViewHolder -> {
+                        router.navigateTo(AndroidScreens.DetailsScreen(data[it.pos] as Film))
                     }
                 }
             }
         }
     }
 
+    private fun handleFilterReaction(holder: MainAdapter.GenreViewHolder) {
+        filmsListPresenter.apply {
+            selectedItem = holder.pos
+            val genre = holder.button.text
+            val filteredFilms: MutableList<Film> = mutableListOf()
+            films.forEach { film ->
+                if (film.genres?.contains(genre) == false) filteredFilms.add(film)
+            }
+            val newData = cachedData - filteredFilms.toSet()
+            val removeRange: List<Int> = data.indices - newData.indices
+            data = newData.toList()
+            val addRange: List<Int> = newData.indices - data.indices
+            if (removeRange.isNotEmpty()) viewState.removeRange(removeRange)
+            if (addRange.isNotEmpty()) viewState.addRange(addRange)
+            viewState.notifyItemsExclude(selectedItem, data.indices, true)
+        }
+    }
 
     private fun loadData() {
         data.getFilms(callback)

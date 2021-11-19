@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainDelimiterBinding
 import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainFilmBinding
 import com.example.testtaskfilmsapi.databinding.ItemRecyclerMainGenreBinding
 import com.example.testtaskfilmsapi.model.Film
@@ -44,13 +45,29 @@ class MainAdapter(
                 ).apply { itemView.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
             }
             else -> {
-                throw IllegalStateException()
+                DelimiterViewHolder(
+                    ItemRecyclerMainDelimiterBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (presenter.data[position]) {
+            is Constants -> DELIMITERS
+            is String -> GENRES
+            is Film -> FILMS
+            else -> throw IllegalStateException()
+        }
+    }
+
+    fun getViewType(position: Int): Int { //return span weight
+        return when (presenter.data[position]) {
+            is Constants -> GENRES
             is String -> GENRES
             is Film -> FILMS
             else -> throw IllegalStateException()
@@ -91,8 +108,23 @@ class MainAdapter(
         }
     }
 
+    inner class DelimiterViewHolder(private val binding: ItemRecyclerMainDelimiterBinding) :
+        BaseViewHolder(binding.root) {
+        override var pos: Int = -1
+
+        override fun loadString(text: String) {
+            binding.delimiter.text = text
+        }
+    }
+
     companion object {
-        const val FILMS = 1 //span weight
-        const val GENRES = 2 //full string
+        const val FILMS = 1
+        const val GENRES = 2
+        const val DELIMITERS = 3
+    }
+
+    enum class Constants(val string: String) {
+        GENRES_DELIMITER("Жанры"),
+        FILMS_DELIMITER("Фильмы")
     }
 }

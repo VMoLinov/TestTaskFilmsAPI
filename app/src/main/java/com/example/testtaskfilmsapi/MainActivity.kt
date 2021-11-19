@@ -1,6 +1,7 @@
 package com.example.testtaskfilmsapi
 
 import android.os.Bundle
+import android.view.MenuItem
 import com.example.testtaskfilmsapi.databinding.ActivityMainBinding
 import com.example.testtaskfilmsapi.navigation.BackButtonListener
 import moxy.MvpAppCompatActivity
@@ -16,6 +17,13 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         super.onCreate(savedInstanceState)
         val vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb.root)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            supportFragmentManager.popBackStack()
+        }
+        return true
     }
 
     override fun onResumeFragments() {
@@ -36,4 +44,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
         presenter.backPressed()
     }
+
+    fun getToolBar() = supportActionBar
 }

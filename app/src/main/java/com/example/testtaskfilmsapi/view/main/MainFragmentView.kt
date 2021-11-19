@@ -8,7 +8,7 @@ interface MainFragmentView : MvpView {
 
     fun renderData()
 
-    fun notifyItemsExclude(position: Int, size: IntRange)
+    fun notifyItemsExclude(position: Int, range: IntRange, scroll: Boolean)
 
     fun removeRange(range: List<Int>)
 

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testtaskfilmsapi.App
+import com.example.testtaskfilmsapi.MainActivity
+import com.example.testtaskfilmsapi.R
 import com.example.testtaskfilmsapi.databinding.FragmentMainBinding
 import com.example.testtaskfilmsapi.model.FilmsRepoImpl
 import com.example.testtaskfilmsapi.navigation.BackButtonListener
@@ -39,7 +41,7 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
         val layoutManager = GridLayoutManager(requireContext(), GRID_SPAN_COUNT)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return adapter.getItemViewType(position)
+                return adapter.getViewType(position)
             }
         }
         binding.recyclerMain.layoutManager = layoutManager
@@ -53,10 +55,11 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
         }
     }
 
-    override fun notifyItemsExclude(position: Int, size: IntRange) {
-        repeat(size.count()) {
+    override fun notifyItemsExclude(position: Int, range: IntRange, scroll: Boolean) {
+        repeat(range.count()) {
             binding.recyclerMain.post {
                 if (it != position) adapter.notifyItemChanged(it)
+                if (scroll) binding.recyclerMain.scrollToPosition(range.last)
             }
         }
     }
@@ -80,6 +83,15 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val actionBar = (activity as MainActivity).getToolBar()
+        actionBar?.let {
+            it.title = getString(R.string.main_fragment)
+            it.setDisplayHomeAsUpEnabled(false)
+        }
     }
 
     companion object {

@@ -6,9 +6,9 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/genre"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="@dimen/item_genre_size"
+        android:id="@+id/delimiter"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="@dimen/chips_text_size"
