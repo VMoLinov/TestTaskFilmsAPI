@@ -1,5 +1,6 @@
 package com.example.testtaskfilmsapi.view.main
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ class MainAdapter(
     private val imageLoader: ImageLoader = GlideImageLoader()
 ) : RecyclerView.Adapter<MainAdapter.BaseViewHolder>() {
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return when (viewType) {
             GENRES -> {
@@ -25,7 +27,12 @@ class MainAdapter(
                         parent,
                         false
                     )
-                ).apply { button.setOnClickListener { presenter.itemCLickListener?.invoke(this) } }
+                ).apply {
+                    button.setOnClickListener {
+                        if (button.isChecked) presenter.itemCLickListener?.invoke(this)
+                        else presenter.restoreData()
+                    }
+                }
             }
             FILMS -> {
                 FilmsViewHolder(
@@ -81,10 +88,6 @@ class MainAdapter(
 
         override fun loadString(text: String) {
             binding.genre.text = text
-        }
-
-        fun clearChip() {
-            button.isChecked = false
         }
     }
 

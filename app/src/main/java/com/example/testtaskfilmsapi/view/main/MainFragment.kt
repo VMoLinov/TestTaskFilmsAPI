@@ -48,7 +48,29 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
 
     @SuppressLint("NotifyDataSetChanged")
     override fun renderData() {
-        adapter.notifyDataSetChanged()
+        binding.recyclerMain.post {
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun notifyItemsExclude(position: Int, size: IntRange) {
+        repeat(size.count()) {
+            binding.recyclerMain.post {
+                if (it != position) adapter.notifyItemChanged(it)
+            }
+        }
+    }
+
+    override fun removeRange(range: List<Int>) {
+        binding.recyclerMain.post {
+            adapter.notifyItemRangeRemoved(range.first(), range[range.lastIndex])
+        }
+    }
+
+    override fun addRange(range: List<Int>) {
+        binding.recyclerMain.post {
+            adapter.notifyItemRangeInserted(range.first(), range[range.lastIndex])
+        }
     }
 
     override fun backPressed(): Boolean {
@@ -61,6 +83,6 @@ class MainFragment : MvpAppCompatFragment(), MainFragmentView, BackButtonListene
     }
 
     companion object {
-        const val GRID_SPAN_COUNT = 2
+        const val GRID_SPAN_COUNT = 2 //columns of Grid Layout
     }
 }

@@ -46,12 +46,13 @@ class MainFragmentPresenter(
         }
     }
 
-    class FilmsListPresenter : ListPresenter<MainAdapter.BaseViewHolder> {
+    inner class FilmsListPresenter : ListPresenter<MainAdapter.BaseViewHolder> {
 
         var films = mutableListOf<Film>()
         var genres = mutableListOf<String>()
         var data: List<Any> = mutableListOf()
         var cachedData: List<Any> = mutableListOf()
+        internal var selectedItem: Int = -1
         override var itemCLickListener: ((MainAdapter.BaseViewHolder) -> Unit)? = null
 
         override fun getCount(): Int = data.size
@@ -65,6 +66,7 @@ class MainFragmentPresenter(
 
         private fun bindGenre(holder: MainAdapter.GenreViewHolder) {
             holder.loadString(data[holder.pos] as String)
+            holder.button.isChecked = holder.pos == selectedItem
         }
 
         private fun bindFilm(holder: MainAdapter.FilmsViewHolder) {
@@ -73,6 +75,11 @@ class MainFragmentPresenter(
             holder.loadImage(item.image_url)
         }
 
+        fun restoreData() {
+            data = cachedData.toList()
+            viewState.notifyItemsExclude(selectedItem, data.indices)
+            selectedItem = -1
+        }
     }
 
     val filmsListPresenter = FilmsListPresenter()
@@ -88,6 +95,19 @@ class MainFragmentPresenter(
             itemCLickListener = {
                 when (it) {
                     is MainAdapter.GenreViewHolder -> {
+                        selectedItem = it.pos
+                        val genre = it.button.text
+                        val filteredFilms: MutableList<Film> = mutableListOf()
+                        films.forEach { film ->
+                            if (film.genres?.contains(genre) == false) filteredFilms.add(film)
+                        }
+                        val newData = cachedData - filteredFilms.toSet()
+                        val removeRange: List<Int> = data.indices - newData.indices
+                        data = newData.toList()
+                        val addRange: List<Int> = newData.indices - data.indices
+                        if (removeRange.isNotEmpty()) viewState.removeRange(removeRange)
+                        if (addRange.isNotEmpty()) viewState.addRange(addRange)
+                        viewState.notifyItemsExclude(selectedItem, data.indices)
                     }
                     is MainAdapter.FilmsViewHolder -> {
                     }
@@ -95,6 +115,7 @@ class MainFragmentPresenter(
             }
         }
     }
+
 
     private fun loadData() {
         data.getFilms(callback)

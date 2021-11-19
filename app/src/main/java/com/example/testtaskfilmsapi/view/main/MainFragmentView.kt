@@ -7,4 +7,10 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface MainFragmentView : MvpView {
 
     fun renderData()
+
+    fun notifyItemsExclude(position: Int, size: IntRange)
+
+    fun removeRange(range: List<Int>)
+
+    fun addRange(range: List<Int>)
 }
